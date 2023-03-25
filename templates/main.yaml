@@ -1,0 +1,46 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: |
+  Exercises naming conventions
+
+Parameters:
+  Project:
+    Type: String
+    Default: 'project'
+
+  Environment:
+    Type: String
+    Default: demo
+    AllowedValues:
+      - dev
+      - qa
+      - stg
+      - prod
+      - demo
+  
+Conditions:
+  HasNot: !Equals ['true','false']
+
+Mappings:
+  NamingMap:
+    label:
+      default: 'chachara'
+
+Resources:
+  NullResource:
+    Type: Custom::NullResource
+    Condition: HasNot
+
+Outputs:
+  MainLabel:
+    Value: !Sub ${AWS::StackName}-${Project}-${Environment}
+    Description: Default label
+    Export:
+      Name: !Sub ${AWS::StackName}-MainLabel
+
+  Chachara:
+    Value: !FindInMap [NamingMap, 'label', 'default']
+    Description: Value from mapping
+    Export:
+      Name: !Sub ${AWS::StackName}-Chachara
